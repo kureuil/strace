@@ -1,0 +1,27 @@
+image: kureuil/epitech:latest
+
+stages:
+  - build
+  - test
+  - lint
+
+compile:
+  script:
+    - CC=gcc make re
+    - CC=clang make re
+  stage: build
+  tags:
+    - epitech
+
+cmocka:
+  script: make clean test
+  stage: test
+  tags:
+    - epitech
+
+norminette:
+  script:
+    - make lint
+  stage: lint
+  tags:
+    - epitech
