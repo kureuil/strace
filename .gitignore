@@ -39,6 +39,10 @@
 *.gcda
 *.gcno
 
+# Temporary files
+*~
+.#*#
+
 # Binaries
-zappy_server
-test_zappy_server
+strace
+test_strace
