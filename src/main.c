@@ -5,7 +5,7 @@
 ** Login   <kureuil@epitech.net>
 **
 ** Started on  Fri Mar 18 08:53:07 2016 Arch Kureuil
-** Last update Tue Apr  5 13:52:39 2016 Arch Kureuil
+** Last update Tue Apr  5 14:00:12 2016 Arch Kureuil
 */
 
 #include <sys/ptrace.h>
@@ -40,7 +40,7 @@ exec(char **command, pid_t *pidptr)
     return (-1);
   else if (child == 0)
     {
-      ptrace(PTRACE_TRACEME);
+      ptrace(PTRACE_TRACEME, 0, 0, 0);
       execvp(command[0], command);
       return (-1);
     }
