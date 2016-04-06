@@ -5,7 +5,7 @@
 ** Login   <kureuil@epitech.net>
 **
 ** Started on  Fri Mar 18 08:53:07 2016 Arch Kureuil
-** Last update Tue Apr  5 14:00:12 2016 Arch Kureuil
+** Last update Wed Apr  6 13:32:00 2016 
 */
 
 #include <sys/ptrace.h>
@@ -13,6 +13,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <signal.h>
 #include <errno.h>
 #include "optparser.h"
 #include "strace.h"
@@ -41,12 +42,14 @@ exec(char **command, pid_t *pidptr)
   else if (child == 0)
     {
       ptrace(PTRACE_TRACEME, 0, 0, 0);
+      //      kill(child, SIGSTOP);
       execvp(command[0], command);
       return (-1);
     }
   else
     {
       *pidptr = child;
+      strace(*pidptr);
     }
   return (0);
 }
