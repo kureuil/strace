@@ -5,7 +5,7 @@
 ** Login   <kureuil@epitech.net>
 ** 
 ** Started on  Mon Apr  4 21:50:50 2016 Arch Kureuil
-** Last update Sat Apr  9 21:28:10 2016 Arch Kureuil
+** Last update Sat Apr  9 23:04:17 2016 Arch Kureuil
 */
 
 #ifndef STRACE_H_
@@ -34,6 +34,8 @@ enum e_type
     T_INTEGER,
     T_POINTER,
     T_STRING,
+    T_LONG,
+    T_ULONG,
     T_SIZE_T,
     T_SSIZE_T,
   };

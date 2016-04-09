@@ -5,7 +5,7 @@
 ** Login   <kureuil@epitech.net>
 ** 
 ** Started on  Mon Apr  4 22:19:02 2016 Arch Kureuil
-** Last update Sat Apr  9 22:52:46 2016 Arch Kureuil
+** Last update Sat Apr  9 23:04:33 2016 Arch Kureuil
 */
 
 #include <sys/ptrace.h>
@@ -35,6 +35,16 @@ void	strace_print_pointer(unsigned long long int value)
   (void) value;
 }
 
+void	strace_print_long(unsigned long long int value)
+{
+  (void) value;
+}
+
+void	strace_print_ulong(unsigned long long int value)
+{
+  (void) value;
+}
+
 void	strace_print_string(unsigned long long int value)
 {
   (void) value;
@@ -55,6 +65,8 @@ t_printer g_printers[] = {
   &strace_print_integer,
   &strace_print_pointer,
   &strace_print_string,
+  &strace_print_long,
+  &strace_print_ulong,
   &strace_print_size_t,
   &strace_print_ssize_t,
   NULL
