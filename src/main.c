@@ -5,7 +5,7 @@
 ** Login   <kureuil@epitech.net>
 **
 ** Started on  Fri Mar 18 08:53:07 2016 Arch Kureuil
-** Last update Sat Apr  9 13:31:43 2016 Arch Kureuil
+** Last update Sat Apr  9 17:21:34 2016 Arch Kureuil
 */
 
 #include <sys/ptrace.h>
@@ -41,22 +41,26 @@ exec(char **command, pid_t *pidptr)
     return (-1);
   else if (child == 0)
     {
-      ptrace(PTRACE_TRACEME, 0, 0, 0);
+      if (ptrace(PTRACE_TRACEME, 0, 0, 0) == -1)
+	return (-1);
       execvp(command[0], command);
       return (-1);
     }
   else
-    {
-      *pidptr = child;
-      strace(*pidptr);
-    }
+    *pidptr = child;
   return (0);
+}
+
+static void
+opts_destroy(struct s_strace_opts *opts)
+{
+  free(opts->command);
 }
 
 int
 main(int argc, char *argv[])
 {
-  struct s_strace_opts	opts;
+  MANAGED(opts_destroy) struct s_strace_opts	opts;
 
   memset(&opts, 0, sizeof(opts));
   if (optparse(argc, argv, &opts))

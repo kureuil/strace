@@ -5,7 +5,7 @@
 ** Login   <kureuil@epitech.net>
 ** 
 ** Started on  Mon Apr  4 21:50:50 2016 Arch Kureuil
-** Last update Sat Apr  9 13:22:06 2016 Arch Kureuil
+** Last update Sat Apr  9 14:58:59 2016 Arch Kureuil
 */
 
 #ifndef STRACE_H_
@@ -14,7 +14,12 @@
 # include <stdbool.h>
 # include <sys/types.h>
 
+# define MANAGED(dtor)			__attribute__((__cleanup__(dtor)))
 # define STRACE_IS_SYSCALL(instr)	((instr & 0xffff) == 0x50f)
+
+# define STRACE_SYSCALL_ARGS_MAX	6
+
+typedef void (*t_printer)();
 
 struct s_strace_opts
 {
@@ -22,6 +27,47 @@ struct s_strace_opts
   char	**command;
   bool	compliant;
 };
+
+enum e_retval
+  {
+    R_DEFAULT,
+    R_SIZE_T,
+    R_SSIZE_T,
+    R_INTEGER,
+    R_POINTER,
+    R_VOID,
+  };
+
+enum e_type
+  {
+    T_DEFAULT,
+    T_INTEGER,
+    T_POINTER,
+    T_STRING,
+    T_SIZE_T,
+    T_SSIZE_T,
+  };
+
+struct s_syscall_arg
+{
+  bool	custom;
+  union
+  {
+    enum e_type	type;
+    t_printer	callback;
+  }	printer;
+};
+
+struct s_syscall
+{
+  unsigned long long	id;
+  const char		*name;
+  enum e_retval		retval;
+  size_t		argc;
+  struct s_syscall_arg	args[STRACE_SYSCALL_ARGS_MAX];
+};
+
+extern struct s_syscall g_syscalls[];
 
 /*
 ** Trace all system calls made by the given PID.

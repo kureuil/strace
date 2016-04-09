@@ -5,7 +5,7 @@
 ## Login   <person_l@epitech.net>
 ##
 ## Started on  Mon Feb 15 09:43:26 2016 Louis Person
-## Last update Tue Mar 29 11:08:40 2016 Arch Kureuil
+## Last update Sat Apr  9 14:46:48 2016 Arch Kureuil
 ##
 
 AR			= ar rc
@@ -35,7 +35,7 @@ CFLAGS			+= -Wextra
 CFLAGS			+= -Wpedantic
 CFLAGS			+= -Wstrict-overflow
 CFLAGS			+= -I ./inc/
-CFLAGS			+= -std=gnu99
+CFLAGS			+= -std=gnu11
 CFLAGS			+= -D_DEFAULT_SOURCE
 CFLAGS			+= -march=native
 CFLAGS			+= -O2
