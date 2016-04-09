@@ -5,7 +5,7 @@
 ** Login   <vagrant@epitech.net>
 **
 ** Started on  Sat Apr  9 19:30:52 2016
-** Last update Sat Apr  9 19:36:23 2016 
+** Last update Sat Apr  9 19:41:12 2016 
 */
 
 #include <stdlib.h>
@@ -15,7 +15,8 @@ struct s_syscall	g_syscalls[] = {
   {
     .id = 0,
     .name = "read",
-    .retval = R_SSIZE_T,
+    .noreturn = false,
+    .retval = T_SSIZE_T,
     .argc = 3,
     .args = {
       {
@@ -41,7 +42,8 @@ struct s_syscall	g_syscalls[] = {
   {
     .id = 1,
     .name = "write",
-    .retval = R_SSIZE_T,
+    .noreturn = false,
+    .retval = T_SSIZE_T,
     .argc = 3,
     .args = {
       {
@@ -67,7 +69,8 @@ struct s_syscall	g_syscalls[] = {
   {
     .id = 60,
     .name = "_exit",
-    .retval = R_VOID,
+    .noreturn = true,
+    .retval = T_DEFAULT,
     .argc = 1,
     .args = {
       {
@@ -81,6 +84,7 @@ struct s_syscall	g_syscalls[] = {
   {
     .id = (unsigned long long) -1,
     .name = NULL,
+    .noreturn = false,
     .retval = 0,
     .argc = 0,
     .args = {{ 0 }},

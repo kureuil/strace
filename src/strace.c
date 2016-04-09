@@ -5,7 +5,7 @@
 ** Login   <kureuil@epitech.net>
 ** 
 ** Started on  Mon Apr  4 22:19:02 2016 Arch Kureuil
-** Last update Sat Apr  9 20:13:16 2016 Arch Kureuil
+** Last update Sat Apr  9 19:38:35 2016 
 */
 
 #include <sys/ptrace.h>
@@ -19,6 +19,46 @@
 #include <errno.h>
 #include <stdint.h>
 #include "strace.h"
+
+void	strace_print_hexa(unsigned long long int value)
+{
+  fprintf(stderr, "0x%llx", value);
+}
+
+void	strace_print_integer(unsigned long long int value)
+{
+  (void) value;
+}
+
+void	strace_print_pointer(unsigned long long int value)
+{
+  (void) value;
+}
+
+void	strace_print_string(unsigned long long int value)
+{
+  (void) value;
+}
+
+void	strace_print_size_t(unsigned long long int value)
+{
+  (void) value;
+}
+
+void	strace_print_ssize_t(unsigned long long int value)
+{
+  (void) value;
+}
+
+t_printer g_printers[] = {
+  &strace_print_hexa,
+  &strace_print_integer,
+  &strace_print_pointer,
+  &strace_print_string,
+  &strace_print_size_t,
+  &strace_print_ssize_t,
+  NULL
+};
 
 static int
 strace_peek_registers(pid_t child, struct user_regs_struct *regsp)
@@ -87,15 +127,26 @@ strace_syscall_print_call(const struct s_syscall *scall,
 			  const struct user_regs_struct *regs,
 			  const struct s_strace_opts *opts)
 {
-  size_t	i;
+  size_t			i;
+  unsigned long long int	value;
 
   (void) opts;
   fprintf(stderr, "%s(", scall->name);
   i = 0;
   while (i < scall->argc)
     {
-      fprintf(stderr, "%s0x%llx",
-	     (i == 0 ? "" : ", "), strace_registers_get_by_idx(regs, i));
+      if (i > 0)
+	fprintf(stderr, ", ");
+      value = strace_registers_get_by_idx(regs, i);
+      if (opts->compliant)
+	{
+	  if (scall->args[i].custom)
+	    scall->args[i].printer.callback(value);
+	  else
+	    g_printers[scall->args[i].printer.type](value);
+	}
+      else
+	strace_print_hexa(value);
       i++;
     }
   return (0);
@@ -107,7 +158,7 @@ strace_syscall_print_return(const struct s_syscall *scall,
 			    const struct s_strace_opts *opts)
 {
   (void) opts;
-  if (scall->retval != R_VOID)
+  if (!scall->noreturn)
     fprintf(stderr, ") = 0x%llx\n", regs->rax);
   else
     fprintf(stderr, ") = ?\n");
@@ -130,7 +181,7 @@ strace_syscall_handle(pid_t child,
   if (ptrace(PTRACE_SINGLESTEP, child, 0, 0) == -1)
     return (-1);
   wait(&status);
-  if (scall.retval != R_VOID)
+  if (!scall.noreturn)
     {
       if (strace_peek_registers(child, &registers))
 	return (-1);
