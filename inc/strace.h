@@ -5,7 +5,7 @@
 ** Login   <kureuil@epitech.net>
 ** 
 ** Started on  Mon Apr  4 21:50:50 2016 Arch Kureuil
-** Last update Sat Apr  9 17:51:54 2016 Arch Kureuil
+** Last update Sat Apr  9 21:28:10 2016 Arch Kureuil
 */
 
 #ifndef STRACE_H_
@@ -19,7 +19,7 @@
 
 # define STRACE_SYSCALL_ARGS_MAX	6
 
-typedef void (*t_printer)();
+typedef void (*t_printer)(unsigned long long int);
 
 struct s_strace_opts
 {
@@ -27,16 +27,6 @@ struct s_strace_opts
   char	**command;
   bool	compliant;
 };
-
-enum e_retval
-  {
-    R_DEFAULT,
-    R_SIZE_T,
-    R_SSIZE_T,
-    R_INTEGER,
-    R_POINTER,
-    R_VOID,
-  };
 
 enum e_type
   {
@@ -62,7 +52,8 @@ struct s_syscall
 {
   unsigned long long	id;
   const char		*name;
-  enum e_retval		retval;
+  bool			noreturn;
+  enum e_type		retval;
   size_t		argc;
   struct s_syscall_arg	args[STRACE_SYSCALL_ARGS_MAX];
 };
