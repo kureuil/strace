@@ -5,7 +5,7 @@
 ** Login   <kureuil@epitech.net>
 **
 ** Started on  Fri Mar 18 08:53:07 2016 Arch Kureuil
-** Last update Wed Apr  6 13:32:00 2016 
+** Last update Sat Apr  9 13:31:43 2016 Arch Kureuil
 */
 
 #include <sys/ptrace.h>
@@ -28,7 +28,7 @@ usage(FILE *stream, const char *prgm)
   fprintf(stream, "\t-p PID   Trace program with id = PID instead of launching"
 	  " COMMAND\n");
   fprintf(stream, "\tCOMMAND  Program to execute & trace\n");
-  fprintf(stream, "\tARGS     Arguments given to the executed program");
+  fprintf(stream, "\tARGS     Arguments given to the executed program\n");
 }
 
 static int
@@ -42,7 +42,6 @@ exec(char **command, pid_t *pidptr)
   else if (child == 0)
     {
       ptrace(PTRACE_TRACEME, 0, 0, 0);
-      //      kill(child, SIGSTOP);
       execvp(command[0], command);
       return (-1);
     }
