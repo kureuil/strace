@@ -5,7 +5,7 @@
 ** Login   <kureuil@epitech.net>
 ** 
 ** Started on  Mon Apr  4 21:50:50 2016 Arch Kureuil
-** Last update Sun Apr 10 00:36:45 2016 Arch Kureuil
+** Last update Sun Apr 10 01:15:07 2016 Arch Kureuil
 */
 
 #ifndef STRACE_H_
@@ -18,6 +18,7 @@
 # define MANAGED(dtor)			__attribute__((__cleanup__(dtor)))
 # define STRACE_IS_SYSCALL(instr)	((instr & 0xffff) == 0x50f)
 # define MAX(x, y)			((x) ^ (((x) ^ (y)) & -((x) < (y))))
+# define ARRAYSIZE(arr)			(sizeof(arr) / sizeof(arr[0]))
 
 # define STRACE_SYSCALL_ARGS_MAX	6
 
@@ -30,6 +31,12 @@ struct s_strace_opts
   pid_t	pid;
   char	**command;
   bool	compliant;
+};
+
+struct s_flag
+{
+  const char	*name;
+  int		value;
 };
 
 enum e_type
@@ -74,5 +81,10 @@ extern struct s_syscall g_syscalls[];
 ** @return 0 in case of success, -1 in case of failure
 */
 int strace(pid_t pid, const struct s_strace_opts *opts);
+
+int
+strace_print_flags_open(unsigned long long int value,
+			pid_t child,
+			const struct user_regs_struct *regs);
 
 #endif

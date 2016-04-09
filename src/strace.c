@@ -5,9 +5,10 @@
 ** Login   <kureuil@epitech.net>
 ** 
 ** Started on  Mon Apr  4 22:19:02 2016 Arch Kureuil
-** Last update Sun Apr 10 00:38:22 2016 Arch Kureuil
+** Last update Sun Apr 10 01:20:27 2016 Arch Kureuil
 */
 
+#define _GNU_SOURCE
 #include <sys/ptrace.h>
 #include <sys/wait.h>
 #include <stdio.h>
@@ -16,9 +17,11 @@
 #include <stddef.h>
 #include <sys/reg.h>
 #include <sys/user.h>
+#include <sys/stat.h>
 #include <string.h>
 #include <errno.h>
 #include <stdint.h>
+#include <fcntl.h>
 #include "strace.h"
 
 int	strace_print_hexa(unsigned long long int value,
@@ -139,6 +142,63 @@ int	strace_print_ssize_t(unsigned long long int value,
   (void) child;
   (void) regs;
   return (fprintf(stderr, "%zu", (ssize_t) value));
+}
+
+static const struct s_flag g_open_flags[] = {
+  { .value = O_APPEND, .name = "O_APPEND" },
+  { .value = O_ASYNC, .name = "O_ASYNC" },
+  { .value = O_CLOEXEC, .name = "O_CLOEXEC" },
+  { .value = O_CREAT, .name = "O_CREAT" },
+  { .value = O_DIRECT, .name = "O_DIRECT" },
+  { .value = O_DIRECTORY, .name = "O_DIRECTORY" },
+  { .value = O_EXCL, .name = "O_EXCL" },
+  { .value = O_NOATIME, .name = "O_NOATIME" },
+  { .value = O_NOCTTY, .name = "O_NOCTTY" },
+  { .value = O_NOFOLLOW, .name = "O_NOFOLLOW" },
+  { .value = O_NONBLOCK, .name = "O_NONBLOCK" },
+  { .value = O_PATH, .name = "O_PATH" },
+  { .value = O_SYNC, .name = "O_SYNC" },
+  { .value = O_TRUNC, .name = "O_TRUNC" },
+  { .value = O_RDONLY, .name = "O_RDONLY" },
+  { .value = O_WRONLY, .name = "O_WRONLY" },
+  { .value = O_RDWR, .name = "O_RDWR" },
+};
+
+int
+strace_print_flags(unsigned long long int value,
+		   size_t size,
+		   const struct s_flag *flags)
+{
+  size_t	i;
+  size_t	j;
+  int		printed;
+  long long int	cdb;
+
+  i = j = 0;
+  printed = 0;
+  cdb = (long long int) value;
+  while (i < size)
+    {
+      if ((cdb & flags[i].value) == flags[i].value)
+	{
+	  if (j > 0)
+	    printed += fprintf(stderr, "|");
+	  printed += fprintf(stderr, "%s", flags[i].name);
+	  j++;
+	}
+      i++;
+    }
+  return (printed);
+}
+
+int
+strace_print_flags_open(unsigned long long int value,
+			pid_t child,
+			const struct user_regs_struct *regs)
+{
+  (void) child;
+  (void) regs;
+  return (strace_print_flags(value, ARRAYSIZE(g_open_flags), g_open_flags));
 }
 
 t_printer g_printers[] = {
