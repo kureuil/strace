@@ -5,7 +5,7 @@
 ## Login   <person_l@epitech.net>
 ##
 ## Started on  Tue Mar 01 19:25:03 2016 Louis Person
-## Last update Mon Apr  4 22:18:51 2016 Arch Kureuil
+## Last update Sat Apr  9 19:34:07 2016 
 ##
 
 NAME	= strace
@@ -13,7 +13,8 @@ NAME	= strace
 SRCS	= \
 	src/main.c \
 	src/optparser.c \
-	src/strace.c
+	src/strace.c \
+	src/syscalls.c
 
 TSTSRCS	= \
 	utests/main.c
