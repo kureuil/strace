@@ -5,7 +5,7 @@
 ** Login   <kureuil@epitech.net>
 ** 
 ** Started on  Mon Apr  4 21:50:50 2016 Arch Kureuil
-** Last update Sat Apr  9 14:58:59 2016 Arch Kureuil
+** Last update Sat Apr  9 17:51:54 2016 Arch Kureuil
 */
 
 #ifndef STRACE_H_
@@ -73,8 +73,9 @@ extern struct s_syscall g_syscalls[];
 ** Trace all system calls made by the given PID.
 **
 ** @param pid the traced program id
+** @param opts the options given to strace
 ** @return 0 in case of success, -1 in case of failure
 */
-int strace(pid_t pid);
+int strace(pid_t pid, const struct s_strace_opts *opts);
 
 #endif

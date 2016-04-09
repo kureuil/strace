@@ -5,7 +5,7 @@
 ** Login   <kureuil@epitech.net>
 **
 ** Started on  Fri Mar 18 08:53:07 2016 Arch Kureuil
-** Last update Sat Apr  9 17:21:34 2016 Arch Kureuil
+** Last update Sat Apr  9 17:49:43 2016 Arch Kureuil
 */
 
 #include <sys/ptrace.h>
@@ -78,7 +78,7 @@ main(int argc, char *argv[])
       if (exec(opts.command, &opts.pid))
 	return (perror(argv[0]), EXIT_FAILURE);
     }
-  if (strace(opts.pid))
+  if (strace(opts.pid, &opts))
     {
       if (errno != 0)
 	perror(argv[0]);

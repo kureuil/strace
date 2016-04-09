@@ -5,7 +5,7 @@
 ** Login   <kureuil@epitech.net>
 ** 
 ** Started on  Mon Apr  4 22:03:36 2016 Arch Kureuil
-** Last update Sat Apr  9 13:31:21 2016 Arch Kureuil
+** Last update Sat Apr  9 19:12:56 2016 Arch Kureuil
 */
 
 #include <unistd.h>
@@ -29,7 +29,7 @@ optparse(int argc, char **argv, struct s_strace_opts *opts)
       else
 	return (1);
     }
-  if (argc - optind == 0)
+  if (opts->pid == 0 && argc - optind == 0)
     return (-1);
   opts->command = calloc(argc - optind + 1, sizeof(char *));
   if (opts->command == NULL)
