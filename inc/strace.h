@@ -5,7 +5,7 @@
 ** Login   <kureuil@epitech.net>
 ** 
 ** Started on  Mon Apr  4 21:50:50 2016 Arch Kureuil
-** Last update Sat Apr  9 23:04:17 2016 Arch Kureuil
+** Last update Sun Apr 10 00:36:45 2016 Arch Kureuil
 */
 
 #ifndef STRACE_H_
@@ -13,13 +13,17 @@
 
 # include <stdbool.h>
 # include <sys/types.h>
+# include <sys/user.h>
 
 # define MANAGED(dtor)			__attribute__((__cleanup__(dtor)))
 # define STRACE_IS_SYSCALL(instr)	((instr & 0xffff) == 0x50f)
+# define MAX(x, y)			((x) ^ (((x) ^ (y)) & -((x) < (y))))
 
 # define STRACE_SYSCALL_ARGS_MAX	6
 
-typedef void (*t_printer)(unsigned long long int);
+typedef int (*t_printer)(unsigned long long int,
+			 pid_t,
+			 const struct user_regs_struct *);
 
 struct s_strace_opts
 {

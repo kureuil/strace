@@ -5,7 +5,7 @@
 ** Login   <kureuil@epitech.net>
 ** 
 ** Started on  Mon Apr  4 22:19:02 2016 Arch Kureuil
-** Last update Sat Apr  9 23:04:33 2016 Arch Kureuil
+** Last update Sun Apr 10 00:38:22 2016 Arch Kureuil
 */
 
 #include <sys/ptrace.h>
@@ -16,48 +16,129 @@
 #include <stddef.h>
 #include <sys/reg.h>
 #include <sys/user.h>
+#include <string.h>
 #include <errno.h>
 #include <stdint.h>
 #include "strace.h"
 
-void	strace_print_hexa(unsigned long long int value)
+int	strace_print_hexa(unsigned long long int value,
+			  pid_t child,
+			  const struct user_regs_struct *regs)
 {
-  fprintf(stderr, "0x%llx", value);
+  (void) child;
+  (void) regs;
+  return (fprintf(stderr, "0x%llx", value));
 }
 
-void	strace_print_integer(unsigned long long int value)
+int	strace_print_integer(unsigned long long int value,
+			     pid_t child,
+			     const struct user_regs_struct *regs)
 {
-  (void) value;
+  (void) child;
+  (void) regs;
+  return (fprintf(stderr, "%d", (int) value));
 }
 
-void	strace_print_pointer(unsigned long long int value)
+int	strace_print_pointer(unsigned long long int value,
+			     pid_t child,
+			     const struct user_regs_struct *regs)
 {
-  (void) value;
+  (void) child;
+  (void) regs;
+  if (value == 0)
+    return (fprintf(stderr, "NULL"));
+  else
+    return (fprintf(stderr, "%#llx", value));
 }
 
-void	strace_print_long(unsigned long long int value)
+int	strace_print_long(unsigned long long int value,
+			  pid_t child,
+			  const struct user_regs_struct *regs)
 {
-  (void) value;
+  (void) child;
+  (void) regs;
+  return (fprintf(stderr, "%ld", (long) value));
 }
 
-void	strace_print_ulong(unsigned long long int value)
+int	strace_print_ulong(unsigned long long int value,
+			   pid_t child,
+			   const struct user_regs_struct *regs)
 {
-  (void) value;
+  (void) child;
+  (void) regs;
+  return (fprintf(stderr, "%lu", (unsigned long) value));
 }
 
-void	strace_print_string(unsigned long long int value)
+void	strace_string_read(char **strp,
+			   unsigned long long int addr,
+			   pid_t child)
 {
-  (void) value;
+  size_t	allocated;
+  size_t	readb;
+  unsigned long	tmp;
+
+  allocated = 16;
+  readb = 0;
+  if ((*strp = realloc(*strp, allocated)) == NULL)
+    return ;
+  while (true)
+    {
+      if (readb > allocated)
+	{
+	  allocated <<= 1;
+	  if ((*strp = realloc(*strp, allocated)) == NULL)
+	    return ;
+	}
+      errno = 0;
+      tmp = ptrace(PTRACE_PEEKDATA, child, addr + readb);
+      if (errno)
+	{
+	  (*strp)[readb] = '\0';
+	  return ;
+	}
+      memcpy(*strp + readb, &tmp, sizeof(tmp));
+      if (memchr(&tmp, 0, sizeof(tmp)) != NULL)
+	return ;
+      readb += sizeof(tmp);
+    }
 }
 
-void	strace_print_size_t(unsigned long long int value)
+int	strace_print_string(unsigned long long int value,
+			    pid_t child,
+			    const struct user_regs_struct *regs)
 {
-  (void) value;
+  char	*str;
+  int	ret;
+
+  (void) regs;
+  if (value == 0)
+    return (fprintf(stderr, "NULL"));
+  else
+    {
+      str = NULL;
+      strace_string_read(&str, value, child);
+      ret = fprintf(stderr, "\"%s\"", str);
+      free(str);
+      return (ret);
+    }
 }
 
-void	strace_print_ssize_t(unsigned long long int value)
+int	strace_print_size_t(unsigned long long int value,
+			    pid_t child,
+			    const struct user_regs_struct *regs)
 {
-  (void) value;
+  (void) child;
+  (void) regs;
+  return (fprintf(stderr, "%zu", (size_t) value));
+}
+
+int	strace_print_ssize_t(unsigned long long int value,
+			     pid_t child,
+			     const struct user_regs_struct *regs)
+{
+  (void) child;
+  (void) regs;
+  return (fprintf(stderr, "%zu", (ssize_t) value));
 }
 
 t_printer g_printers[] = {
@@ -137,43 +218,56 @@ strace_registers_get_by_idx(const struct user_regs_struct *regs,
 static int
 strace_syscall_print_call(const struct s_syscall *scall,
 			  const struct user_regs_struct *regs,
-			  const struct s_strace_opts *opts)
+			  const struct s_strace_opts *opts,
+			  pid_t child)
 {
   size_t			i;
   unsigned long long int	value;
+  int				printed;
 
-  (void) opts;
-  fprintf(stderr, "%s(", scall->name);
+  printed = fprintf(stderr, "%s(", scall->name);
   i = 0;
   while (i < scall->argc)
     {
       if (i > 0)
-	fprintf(stderr, ", ");
+	printed += fprintf(stderr, ", ");
       value = strace_registers_get_by_idx(regs, i);
       if (opts->compliant)
 	{
 	  if (scall->args[i].custom)
-	    scall->args[i].printer.callback(value);
+	    printed += scall->args[i].printer.callback(value, child, regs);
 	  else
-	    g_printers[scall->args[i].printer.type](value);
+	    printed += g_printers[scall->args[i].printer.type](value,
+							       child, regs);
 	}
       else
-	strace_print_hexa(value);
+	printed += strace_print_hexa(value, child, regs);
       i++;
     }
-  return (0);
+  return (printed);
 }
 
 static int
 strace_syscall_print_return(const struct s_syscall *scall,
 			    const struct user_regs_struct *regs,
-			    const struct s_strace_opts *opts)
+			    const struct s_strace_opts *opts,
+			    int printed)
 {
   (void) opts;
   if (!scall->noreturn)
-    fprintf(stderr, ") = 0x%llx\n", regs->rax);
+    {
+      if (opts->compliant)
+	fprintf(stderr, ")%*s= 0x%llx\n", MAX(40 - printed, 0), " ", regs->rax);
+      else
+	fprintf(stderr, ") = 0x%llx\n", regs->rax);
+    }
   else
-    fprintf(stderr, ") = ?\n");
+    {
+      if (opts->compliant)
+	fprintf(stderr, ")%*s= ?\n", MAX(40 - printed, 0), " ");
+      else
+	fprintf(stderr, ") = ?\n");
+    }
   return (0);
 }
 
@@ -185,14 +279,14 @@ strace_syscall_handle(pid_t child,
   int				status;
   struct user_regs_struct	registers;
   struct s_syscall		scall;
+  int				printed;
 
   if (strace_syscall_get_by_id(regs->rax, &scall))
     {
       fprintf(stderr, "Unknown syscall no: %llu\n", regs->rax);
       return (0);
     }
-  if (strace_syscall_print_call(&scall, regs, opts))
-    return (-1);
+  printed = strace_syscall_print_call(&scall, regs, opts, child);
   if (ptrace(PTRACE_SINGLESTEP, child, 0, 0) == -1)
     return (-1);
   wait(&status);
@@ -201,8 +295,7 @@ strace_syscall_handle(pid_t child,
       if (strace_peek_registers(child, &registers))
 	return (-1);
     }
-  if (strace_syscall_print_return(&scall, &registers, opts))
-    return (-1);
+  strace_syscall_print_return(&scall, &registers, opts, printed);
   if (!WIFSTOPPED(status))
     {
       fprintf(stderr, "+++ exited with %d +++\n", WEXITSTATUS(status));

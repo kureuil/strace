@@ -5,7 +5,7 @@
 ** Login   <vagrant@epitech.net>
 **
 ** Started on  Sat Apr  9 19:30:52 2016
-** Last update Sat Apr  9 23:36:45 2016 Arch Kureuil
+** Last update Sat Apr  9 23:48:20 2016 Arch Kureuil
 */
 
 #include <stdlib.h>
@@ -304,7 +304,7 @@ struct s_syscall	g_syscalls[] = {
       {
 	.custom = false,
 	.printer = {
-	  .type = T_STRING
+	  .type = T_POINTER
 	}
       },
       {
