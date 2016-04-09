@@ -5,7 +5,7 @@
 ** Login   <kureuil@epitech.net>
 ** 
 ** Started on  Mon Apr  4 22:19:02 2016 Arch Kureuil
-** Last update Wed Apr  6 14:08:20 2016 
+** Last update Sat Apr  9 13:29:11 2016 Arch Kureuil
 */
 
 #include <sys/ptrace.h>
@@ -13,45 +13,65 @@
 #include <stdio.h>
 #include <sys/reg.h>
 #include <sys/user.h>
+#include <errno.h>
 #include "strace.h"
 
-int
-syscall_waiting(pid_t child)
+static int
+strace_peek_registers(pid_t child, struct user_regs_struct *regsp)
 {
-  int status;
+  struct user_regs_struct	registers;
 
-  while (true)
-    {
-      ptrace(PTRACE_SYSCALL, child, 0, 0);
-      waitpid(child, &status, 0);
-      if (WSTOPSIG(status) & 0x80)
-	return (0);
-      if (WIFEXITED(status))
-	return (-1);
-    }
+  errno = 0;
+  if (ptrace(PTRACE_GETREGS, child, 0, &registers) && errno)
+    return (-1);
+  *regsp = registers;
+  return (0);
+}
+
+static int
+strace_peek_instruction(pid_t child,
+			const struct user_regs_struct *regs,
+			long *instrp)
+{
+  long	instruction;
+
+  errno = 0;
+  instruction = ptrace(PTRACE_PEEKTEXT, child, regs->rip, 0);
+  if (instruction == -1 && errno)
+    return (-1);
+  *instrp = instruction;
+  return (0);
+}
+
+static int
+strace_handle_syscall(pid_t child,
+		      const struct user_regs_struct *regs)
+{
+  (void) child;
+  printf("Syscall %llu au rapport !\n", regs->rax);
   return (0);
 }
 
 int
 strace(pid_t pid)
 {
-  int status;
-  int syscall;
-  int retvalue;
+  int				status;
+  struct user_regs_struct	regs;
+  long				curinst;
 
-  waitpid(pid, &status, 0);
+  wait(&status);
   ptrace(PTRACE_ATTACH, pid, 0, 0);
-  ptrace(PTRACE_SETOPTIONS, pid, 0, PTRACE_O_TRACESYSGOOD);
-  while (true)
+  while (WIFSTOPPED(status))
     {
-      if (syscall_waiting(pid) != 0)
-	break;
-      syscall = ptrace(PTRACE_PEEKUSER, pid, sizeof(long) * ORIG_RAX);
-      printf("syscall nbr : %d ", syscall);
-      if (syscall_waiting(pid) != 0)
-        break;
-      retvalue = ptrace(PTRACE_PEEKUSER, pid, sizeof(long) * RAX);
-      printf("ret value : %d\n", retvalue);
+      if (strace_peek_registers(pid, &regs))
+	return (-1);
+      if (strace_peek_instruction(pid, &regs, &curinst))
+	return (-1);
+      if (STRACE_IS_SYSCALL(curinst))
+	strace_handle_syscall(pid, &regs);
+      if (ptrace(PTRACE_SINGLESTEP, pid, 0, 0) == -1)
+	return (-1);
+      wait(&status);
     }
   return (0);
 }
