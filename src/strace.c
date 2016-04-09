@@ -5,7 +5,7 @@
 ** Login   <kureuil@epitech.net>
 ** 
 ** Started on  Mon Apr  4 22:19:02 2016 Arch Kureuil
-** Last update Sat Apr  9 21:35:01 2016 Arch Kureuil
+** Last update Sat Apr  9 22:51:31 2016 Arch Kureuil
 */
 
 #include <sys/ptrace.h>
@@ -255,7 +255,10 @@ strace_syscall_handle(pid_t child,
   struct s_syscall		scall;
 
   if (strace_syscall_get_by_id(regs->rax, &scall))
-    return (0);
+    {
+      fprintf(stderr, "Unknown syscall no: %llu\n", regs->rax);
+      return (0);
+    }
   if (strace_syscall_print_call(&scall, regs, opts))
     return (-1);
   if (ptrace(PTRACE_SINGLESTEP, child, 0, 0) == -1)
