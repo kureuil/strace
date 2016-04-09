@@ -5,7 +5,7 @@
 ** Login   <kureuil@epitech.net>
 ** 
 ** Started on  Mon Apr  4 22:19:02 2016 Arch Kureuil
-** Last update Sat Apr  9 22:51:31 2016 Arch Kureuil
+** Last update Sat Apr  9 22:52:46 2016 Arch Kureuil
 */
 
 #include <sys/ptrace.h>
@@ -19,86 +19,6 @@
 #include <errno.h>
 #include <stdint.h>
 #include "strace.h"
-
-struct s_syscall	g_syscalls[] = {
-  {
-    .id = 0,
-    .name = "read",
-    .noreturn = false,
-    .retval = T_SSIZE_T,
-    .argc = 3,
-    .args = {
-      {
-	.custom = false,
-	.printer = {
-	  .type = T_INTEGER
-	},
-      },
-      {
-	.custom = false,
-	.printer = {
-	  .type = T_POINTER
-	},
-      },
-      {
-	.custom = false,
-	.printer = {
-	  .type = T_SIZE_T
-	},
-      },
-    },
-  },
-  {
-    .id = 1,
-    .name = "write",
-    .noreturn = false,
-    .retval = T_SSIZE_T,
-    .argc = 3,
-    .args = {
-      {
-	.custom = false,
-	.printer = {
-	  .type = T_INTEGER
-	},
-      },
-      {
-	.custom = false,
-	.printer = {
-	  .type = T_POINTER,
-	},
-      },
-      {
-	.custom = false,
-	.printer = {
-	  .type = T_SIZE_T
-	},
-      },
-    },
-  },
-  {
-    .id = 60,
-    .name = "_exit",
-    .noreturn = true,
-    .retval = T_DEFAULT,
-    .argc = 1,
-    .args = {
-      {
-	.custom = false,
-	.printer = {
-	  .type = T_INTEGER
-	},
-      }
-    },
-  },
-  {
-    .id = (unsigned long long) -1,
-    .name = NULL,
-    .noreturn = false,
-    .retval = 0,
-    .argc = 0,
-    .args = {{ 0 }},
-  },
-};
 
 void	strace_print_hexa(unsigned long long int value)
 {
