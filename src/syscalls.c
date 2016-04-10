@@ -5,7 +5,7 @@
 ** Login   <vagrant@epitech.net>
 **
 ** Started on  Sat Apr  9 19:30:52 2016
-** Last update Sun Apr 10 16:08:49 2016 
+** Last update Sun Apr 10 17:44:04 2016 
 */
 
 #include <stdlib.h>
@@ -251,9 +251,9 @@ struct s_syscall	g_syscalls[] = {
                 }
             },
             {
-                .custom = false,
+                .custom = true,
                 .printer = {
-                    .type = T_INTEGER
+                    .callback = strace_print_mmap_flags
                 }
             },
             {

@@ -5,7 +5,7 @@
 ** Login   <kureuil@epitech.net>
 ** 
 ** Started on  Mon Apr  4 21:50:50 2016 Arch Kureuil
-** Last update Sun Apr 10 17:58:13 2016 Arch Kureuil
+** Last update Sun Apr 10 17:40:45 2016 
 */
 
 #ifndef STRACE_H_
@@ -241,4 +241,11 @@ strace_print_stat_struct(unsigned long long int value,
 			 pid_t child,
 			 const struct user_regs_struct *regs);
 
+/*
+** Print flages given to mmap(2)
+*/
+int
+strace_print_mmap_flags(unsigned long long int value,
+                         pid_t child,
+                         const struct user_regs_struct *regs);
 #endif

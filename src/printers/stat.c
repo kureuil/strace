@@ -5,7 +5,7 @@
 ** Login   <kureuil@epitech.net>
 ** 
 ** Started on  Sun Apr 10 17:32:36 2016 Arch Kureuil
-** Last update Sun Apr 10 18:04:52 2016 Arch Kureuil
+** Last update Sun Apr 10 17:13:19 2016 
 */
 
 #define _GNU_SOURCE
@@ -57,7 +57,7 @@ strace_print_stat_struct(unsigned long long int addr,
   printed = fprintf(stderr, "{st_mode=");
   printed += strace_print_flags(stat_data.st_mode,
 				ARRAYSIZE(g_stat_flags), g_stat_flags);
-  printed += fprintf(stderr, "|%d, st_size=%ld, ...}",
+  printed += fprintf(stderr, "|%u, st_size=%lu, ...}",
 		     stat_data.st_mode, stat_data.st_size);
   return (printed);
 }
