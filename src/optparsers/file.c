@@ -5,7 +5,7 @@
 ** Login   <kureuil@epitech.net>
 ** 
 ** Started on  Sun Apr 10 20:54:58 2016 Arch Kureuil
-** Last update Sun Apr 10 21:06:39 2016 Arch Kureuil
+** Last update Sun Apr 10 21:28:04 2016 Arch Kureuil
 */
 
 #include <stdio.h>
@@ -17,7 +17,7 @@ static int
 strace_option_file_command(struct s_strace_opts *opts,
 			   const char *command)
 {
-  opts->output = popen(command, "w");
+  opts->output = popen(command + 1, "w");
   if (opts->output == NULL)
     return (-1);
   opts->output_type = O_COMMAND;
