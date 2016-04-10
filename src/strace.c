@@ -5,7 +5,7 @@
 ** Login   <kureuil@epitech.net>
 ** 
 ** Started on  Mon Apr  4 22:19:02 2016 Arch Kureuil
-** Last update Sun Apr 10 16:23:20 2016 Arch Kureuil
+** Last update Sun Apr 10 16:45:07 2016 Arch Kureuil
 */
 
 #define _GNU_SOURCE
@@ -313,20 +313,22 @@ strace_syscall_print_return(const struct s_syscall *scall,
 			    const struct s_strace_opts *opts,
 			    int printed)
 {
-  (void) opts;
+  int	shift;
+
+  shift = 0;
   if (!scall->noreturn)
     {
       if (opts->compliant)
-	fprintf(stderr, ")%*s= 0x%llx\n", MAX(40 - printed, 0), " ", regs->rax);
-      else
-	fprintf(stderr, ") = 0x%llx\n", regs->rax);
+	shift = MAX(40 - printed, 0);
+      fprintf(stderr, ")%*s= ", shift, " ");
+      g_printers[scall->retval](regs->rax, opts->pid, regs);
+      fprintf(stderr, "\n");
     }
   else
     {
       if (opts->compliant)
-	fprintf(stderr, ")%*s= ?\n", MAX(40 - printed, 0), " ");
-      else
-	fprintf(stderr, ") = ?\n");
+	shift = MAX(40 - printed, 0);
+      fprintf(stderr, ")%*s= ?\n", shift, " ");
     }
   return (0);
 }

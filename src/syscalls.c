@@ -5,7 +5,7 @@
 ** Login   <vagrant@epitech.net>
 **
 ** Started on  Sat Apr  9 19:30:52 2016
-** Last update Sun Apr 10 15:42:14 2016 Arch Kureuil
+** Last update Sun Apr 10 16:47:23 2016 Arch Kureuil
 */
 
 #include <stdlib.h>
@@ -16,7 +16,7 @@ struct s_syscall	g_syscalls[] = {
         .id = 0,
         .name = "read",
         .noreturn = false,
-        .retval = T_DEFAULT,
+        .retval = T_INTEGER,
         .argc = 3,
         .args = {
             {
@@ -43,7 +43,7 @@ struct s_syscall	g_syscalls[] = {
         .id = 1,
         .name = "write",
         .noreturn = false,
-        .retval = T_DEFAULT,
+        .retval = T_INTEGER,
         .argc = 3,
         .args = {
             {
@@ -70,7 +70,7 @@ struct s_syscall	g_syscalls[] = {
         .id = 2,
         .name = "open",
         .noreturn = false,
-        .retval = T_DEFAULT,
+        .retval = T_INTEGER,
         .argc = 3,
         .args = {
             {
@@ -97,7 +97,7 @@ struct s_syscall	g_syscalls[] = {
         .id = 3,
         .name = "close",
         .noreturn = false,
-        .retval = T_DEFAULT,
+        .retval = T_INTEGER,
         .argc = 1,
         .args = {
             {
@@ -112,7 +112,7 @@ struct s_syscall	g_syscalls[] = {
         .id = 4,
         .name = "stat",
         .noreturn = false,
-        .retval = T_DEFAULT,
+        .retval = T_INTEGER,
         .argc = 2,
         .args = {
             {
@@ -133,7 +133,7 @@ struct s_syscall	g_syscalls[] = {
         .id = 5,
         .name = "fstat",
         .noreturn = false,
-        .retval = T_DEFAULT,
+        .retval = T_INTEGER,
         .argc = 2,
         .args = {
             {
@@ -154,7 +154,7 @@ struct s_syscall	g_syscalls[] = {
         .id = 6,
         .name = "lstat",
         .noreturn = false,
-        .retval = T_DEFAULT,
+        .retval = T_INTEGER,
         .argc = 2,
         .args = {
             {
@@ -175,7 +175,7 @@ struct s_syscall	g_syscalls[] = {
         .id = 7,
         .name = "poll",
         .noreturn = false,
-        .retval = T_DEFAULT,
+        .retval = T_INTEGER,
         .argc = 3,
         .args = {
             {
@@ -202,7 +202,7 @@ struct s_syscall	g_syscalls[] = {
         .id = 8,
         .name = "lseek",
         .noreturn = false,
-        .retval = T_DEFAULT,
+        .retval = T_INTEGER,
         .argc = 3,
         .args = {
             {
@@ -229,7 +229,7 @@ struct s_syscall	g_syscalls[] = {
         .id = 9,
         .name = "mmap",
         .noreturn = false,
-        .retval = T_DEFAULT,
+        .retval = T_POINTER,
         .argc = 6,
         .args = {
             {
@@ -274,7 +274,7 @@ struct s_syscall	g_syscalls[] = {
         .id = 10,
         .name = "mprotect",
         .noreturn = false,
-        .retval = T_DEFAULT,
+        .retval = T_INTEGER,
         .argc = 3,
         .args = {
             {
@@ -301,7 +301,7 @@ struct s_syscall	g_syscalls[] = {
         .id = 11,
         .name = "munmap",
         .noreturn = false,
-        .retval = T_DEFAULT,
+        .retval = T_INTEGER,
         .argc = 2,
         .args = {
             {
@@ -322,7 +322,7 @@ struct s_syscall	g_syscalls[] = {
         .id = 12,
         .name = "brk",
         .noreturn = false,
-        .retval = T_DEFAULT,
+        .retval = T_POINTER,
         .argc = 1,
         .args = {
             {
@@ -560,7 +560,7 @@ struct s_syscall	g_syscalls[] = {
         .id = 21,
         .name = "access",
         .noreturn = false,
-        .retval = T_DEFAULT,
+        .retval = T_INTEGER,
         .argc = 2,
         .args = {
             {
@@ -581,7 +581,7 @@ struct s_syscall	g_syscalls[] = {
         .id = 22,
         .name = "pipe",
         .noreturn = false,
-        .retval = T_DEFAULT,
+        .retval = T_INTEGER,
         .argc = 1,
         .args = {
             {
@@ -596,7 +596,7 @@ struct s_syscall	g_syscalls[] = {
         .id = 23,
         .name = "select",
         .noreturn = false,
-        .retval = T_DEFAULT,
+        .retval = T_INTEGER,
         .argc = 5,
         .args = {
             {
