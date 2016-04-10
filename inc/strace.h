@@ -5,7 +5,7 @@
 ** Login   <kureuil@epitech.net>
 ** 
 ** Started on  Mon Apr  4 21:50:50 2016 Arch Kureuil
-** Last update Sun Apr 10 21:42:47 2016 Arch Kureuil
+** Last update Sun Apr 10 22:25:13 2016 Arch Kureuil
 */
 
 #ifndef STRACE_H_
@@ -202,6 +202,17 @@ strace_print_ssize_t(unsigned long long int value,
 		     pid_t child,
 		     const struct user_regs_struct *regs,
 		     const struct s_strace_opts *opts);
+
+/*
+** Print value as errno (if value is negative)
+**
+** @return the number of printed characters
+*/
+int
+strace_print_errno(unsigned long long int value,
+		   pid_t child,
+		   const struct user_regs_struct *regs,
+		   const struct s_strace_opts *opts);
 
 /*
 ** Print value as a hexadecimal number

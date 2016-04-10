@@ -5,7 +5,7 @@
 ** Login   <kureuil@epitech.net>
 ** 
 ** Started on  Sun Apr 10 17:37:58 2016 Arch Kureuil
-** Last update Sun Apr 10 21:58:55 2016 Arch Kureuil
+** Last update Sun Apr 10 22:26:46 2016 Arch Kureuil
 */
 
 #include <stddef.h>
@@ -18,7 +18,7 @@
 #include <time.h>
 #include "strace.h"
 
-t_printer g_printers[] = {
+static const t_printer g_printers[] = {
   &strace_print_hexa,
   &strace_print_integer,
   &strace_print_pointer,
@@ -115,21 +115,27 @@ strace_syscall_print_return(const struct s_syscall *scall,
 			    const struct s_strace_opts *opts,
 			    int printed)
 {
-  int	shift;
+  int		shift;
+  long long	filtered;
 
-  shift = 0;
   if (!scall->noreturn)
     {
-      if (opts->compliant)
-	shift = MAX(opts->align - printed, 0);
+      shift = (opts->compliant ? MAX(opts->align - printed, 0) : 0);
       fprintf(opts->output, ")%*s= ", shift, " ");
-      g_printers[scall->retval](regs->rax, opts->pid, regs, opts);
+      if (opts->compliant)
+	{
+	  filtered = ((long long) regs->rax < 0) ?
+	    (unsigned long long) -1 : regs->rax;
+	  g_printers[scall->retval](filtered, opts->pid, regs, opts);
+	  strace_print_errno(regs->rax, opts->pid, regs, opts);
+	}
+      else
+	strace_print_hexa(regs->rax, opts->pid, regs, opts);
       fprintf(opts->output, "\n");
     }
   else
     {
-      if (opts->compliant)
-	shift = MAX(opts->align - printed, 0);
+      shift = (opts->compliant ? MAX(opts->align - printed, 0) : 0);
       fprintf(opts->output, ")%*s= ?\n", shift, " ");
     }
   return (0);
