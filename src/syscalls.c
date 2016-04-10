@@ -5,7 +5,7 @@
 ** Login   <vagrant@epitech.net>
 **
 ** Started on  Sat Apr  9 19:30:52 2016
-** Last update Sun Apr 10 16:08:49 2016 
+** Last update Sun Apr 10 19:39:02 2016 Arch Kureuil
 */
 
 #include <stdlib.h>
@@ -16,7 +16,7 @@ struct s_syscall	g_syscalls[] = {
         .id = 0,
         .name = "read",
         .noreturn = false,
-        .retval = T_INTEGER,
+        .retval = T_SSIZE_T,
         .argc = 3,
         .args = {
             {
@@ -43,7 +43,7 @@ struct s_syscall	g_syscalls[] = {
         .id = 1,
         .name = "write",
         .noreturn = false,
-        .retval = T_INTEGER,
+        .retval = T_SSIZE_T,
         .argc = 3,
         .args = {
             {
@@ -55,7 +55,7 @@ struct s_syscall	g_syscalls[] = {
             {
                 .custom = false,
                 .printer = {
-                    .type = T_DEFAULT
+                    .type = T_STRING
                 }
             },
             {
@@ -1539,7 +1539,7 @@ struct s_syscall	g_syscalls[] = {
     {
         .id = 60,
         .name = "exit",
-        .noreturn = false,
+        .noreturn = true,
         .retval = T_DEFAULT,
         .argc = 1,
         .args = {
@@ -5189,7 +5189,7 @@ struct s_syscall	g_syscalls[] = {
     {
         .id = 231,
         .name = "exit_group",
-        .noreturn = false,
+        .noreturn = true,
         .retval = T_DEFAULT,
         .argc = 1,
         .args = {
