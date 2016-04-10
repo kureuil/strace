@@ -5,7 +5,7 @@
 ** Login   <kureuil@epitech.net>
 ** 
 ** Started on  Mon Apr  4 21:50:50 2016 Arch Kureuil
-** Last update Sun Apr 10 14:49:07 2016 
+** Last update Sun Apr 10 17:58:13 2016 Arch Kureuil
 */
 
 #ifndef STRACE_H_
@@ -82,17 +82,163 @@ extern struct s_syscall g_syscalls[];
 */
 int strace(pid_t pid, const struct s_strace_opts *opts);
 
+/*
+** Handle a syscall.
+**
+** @param child the pid of the tracee
+** @param regs the registers of the tracee
+** @param opts the options geiven to strace
+*/
+int
+strace_syscall_handle(pid_t child,
+		      const struct user_regs_struct *regs,
+		      const struct s_strace_opts *opts);
+
+int
+strace_peek_registers(pid_t child,
+		      struct user_regs_struct *regsp);
+
+int
+strace_peek_instruction(pid_t child,
+			const struct user_regs_struct *regs,
+			long *instrp);
+
+/*
+** Read a string pointed by addr
+**
+** @param strp pointer to a string. Will be allocated with malloc
+** @param addr the address to peek at
+** @param child pid of the tracee
+*/
+void
+strace_read_string(char **strp,
+		   unsigned long long int addr,
+		   pid_t child);
+
+/*
+** Read n bytes pointed by addr
+**
+** @param addr the address to peek at
+** @param child the pid of the tracee
+** @param nbytes number of bytes to read
+** @param buffer the resulting buffer
+*/
+int
+strace_read_buf(unsigned long long addr,
+		pid_t child,
+		size_t nbytes,
+		void *buffer);
+
+/*
+** Function printing flags found in a value.
+**
+** @param value the flagged value
+** @param size the size of the flags array
+** @param flags the flags array
+** @return the number of printed characters
+*/
+int
+strace_print_flags(unsigned long long int value,
+                   size_t size,
+                   const struct s_flag *flags);
+
+/*
+** Print the string pointed by value
+**
+** @param value the address of the NUL-terminated string
+** @param child the pid of the tracee
+** @param regs the registers of the tracee
+** @return the number of printed characters
+*/
+int
+strace_print_string(unsigned long long int value,
+		    pid_t child,
+		    const struct user_regs_struct *regs);
+
+/*
+** Print value as a size_t
+**
+** @return the number of printed characters
+*/
+int
+strace_print_size_t(unsigned long long int value,
+		    pid_t child,
+		    const struct user_regs_struct *regs);
+
+/*
+** Print value as a ssize_t
+**
+** @return the number of printed characters
+*/
+int
+strace_print_ssize_t(unsigned long long int value,
+		     pid_t child,
+		     const struct user_regs_struct *regs);
+
+/*
+** Print value as a hexadecimal number
+**
+** @return the number of printed characters
+*/
+int
+strace_print_hexa(unsigned long long int value,
+		  pid_t child,
+		  const struct user_regs_struct *regs);
+
+/*
+** Print value as a decimal integer
+**
+** @return the number of printed characters
+*/
+int
+strace_print_integer(unsigned long long int value,
+		     pid_t child,
+		     const struct user_regs_struct *regs);
+
+/*
+** Print value as a pointer
+**
+** @return the number of printed characters
+*/
+int
+strace_print_pointer(unsigned long long int value,
+		     pid_t child,
+		     const struct user_regs_struct *regs);
+
+/*
+** Print value as a long int
+**
+** @return the number of printed characters
+*/
+int
+strace_print_long(unsigned long long int value,
+		  pid_t child,
+		  const struct user_regs_struct *regs);
+
+/*
+** Print value as an unsigned long int
+**
+** @return the number of printed characters
+*/
+int
+strace_print_ulong(unsigned long long int value,
+		   pid_t child,
+		   const struct user_regs_struct *regs);
+
+/*
+** Print flags given to open(2)
+*/
 int
 strace_print_flags_open(unsigned long long int value,
 			pid_t child,
 			const struct user_regs_struct *regs);
+
+/*
+** Print flags given to stat(2)
+*/
 int
 strace_print_stat_struct(unsigned long long int value,
 			 pid_t child,
 			 const struct user_regs_struct *regs);
 
-int
-strace_print_flags(unsigned long long int value,
-                   size_t size,
-                   const struct s_flag *flags);
 #endif
