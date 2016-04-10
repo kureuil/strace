@@ -5,7 +5,7 @@
 ## Login   <person_l@epitech.net>
 ##
 ## Started on  Tue Mar 01 19:25:03 2016 Louis Person
-## Last update Sun Apr 10 17:45:08 2016 
+## Last update Sun Apr 10 20:06:02 2016 Arch Kureuil
 ##
 
 NAME	= strace
@@ -24,7 +24,6 @@ SRCS	= \
 	src/printers/stat.c \
 	src/printers/mmap.c
 
-TSTSRCS	= \
-	utests/main.c
+TSTSRCS =
 
 LIBS	= lib/libarray.a

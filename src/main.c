@@ -5,7 +5,7 @@
 ** Login   <kureuil@epitech.net>
 **
 ** Started on  Fri Mar 18 08:53:07 2016 Arch Kureuil
-** Last update Sat Apr  9 17:49:43 2016 Arch Kureuil
+** Last update Sun Apr 10 20:11:33 2016 Arch Kureuil
 */
 
 #include <sys/ptrace.h>
@@ -73,7 +73,7 @@ main(int argc, char *argv[])
       usage(stderr, argv[0]);
       return (EXIT_FAILURE);
     }
-  if (opts.command != NULL)
+  if (opts.command != NULL && opts.command[0] != NULL)
     {
       if (exec(opts.command, &opts.pid))
 	return (perror(argv[0]), EXIT_FAILURE);
