@@ -52,7 +52,12 @@ class TableSpider(scrapy.Spider):
         count = int(float(response.xpath('count(//tr[@class="tbls-entry-collapsed"])').extract()[0]))
         for i in range(count):
             syscall = response.xpath('//tr[@class="tbls-entry-collapsed"][{}]'.format(i))
-            args = response.xpath('//tr[@class="tbls-arguments-collapsed"][{}]'.format(i))
+            args = syscall.xpath('following-sibling::tr[1]')
+            if not args:
+                continue
+            if 'tbls-arguments-collapsed' not in args.xpath('@class').extract():
+                args = None
+            # args = response.xpath('//tr[@class="tbls-arguments-collapsed"][{}]'.format(i))
             syscall_id = -1
             for s in syscall.xpath('td[1]/text()').extract():
                 syscall_id = int(s)
@@ -60,8 +65,9 @@ class TableSpider(scrapy.Spider):
             for s in syscall.xpath('td[2]/text()').extract():
                 syscall_name = s
             argc = 0
-            for s in args.xpath('count(td/table/tbody/tr[2]/td)').extract():
-                argc = int(float(s))
+            if args:
+                for s in args.xpath('count(td/table/tbody/tr[2]/td)').extract():
+                    argc = int(float(s))
             scall = {
                 'id': syscall_id,
                 'name': syscall_name,
@@ -74,7 +80,9 @@ class TableSpider(scrapy.Spider):
         .retval = T_DEFAULT,
         .argc = %d,
         .args = {""" % (syscall_id, syscall_name, argc)
-            arguments = args.xpath('td/table/tbody/tr[2]/td/text()').extract()
+            arguments = ()
+            if args:
+                arguments = args.xpath('td/table/tbody/tr[2]/td/text()').extract()
             if (len(arguments)):
                 for s in arguments:
                     argtype = self.typetable.get(s.strip(), 'T_DEFAULT')
