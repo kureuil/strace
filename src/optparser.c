@@ -5,7 +5,7 @@
 ** Login   <kureuil@epitech.net>
 ** 
 ** Started on  Mon Apr  4 22:03:36 2016 Arch Kureuil
-** Last update Sun Apr 10 20:34:56 2016 Arch Kureuil
+** Last update Sun Apr 10 21:17:19 2016 Arch Kureuil
 */
 
 #include <unistd.h>
@@ -15,26 +15,11 @@
 #include "optparser.h"
 #include "strace.h"
 
-static int
-option_compliant(struct s_strace_opts *opts)
-{
-  opts->compliant = true;
-  return (0);
-}
-
-static int
-option_pid(struct s_strace_opts *opts)
-{
-  errno = 0;
-  opts->pid = (pid_t) strtol(optarg, NULL, 10);
-  if (errno == -1)
-    return (-1);
-  return (0);
-}
-
 static const struct s_option g_opts[] = {
-  { .flag = 'p', .callback = &option_pid },
-  { .flag = 's', .callback = &option_compliant },
+  { .flag = 'p', .callback = &strace_option_pid },
+  { .flag = 's', .callback = &strace_option_compliant },
+  { .flag = 'a', .callback = &strace_option_align },
+  { .flag = 'f', .callback = &strace_option_file },
   { .flag = '\0', .callback = NULL },
 };
 
@@ -81,7 +66,7 @@ optparse(int argc, char **argv, struct s_strace_opts *opts)
   char			c;
   struct s_option	opt;
 
-  while ((c = getopt(argc, argv, "sp:")) != -1)
+  while ((c = getopt(argc, argv, "sp:a:f:")) != -1)
     {
       if (optparser_get_option(c, &opt))
 	return (-1);

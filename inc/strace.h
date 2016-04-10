@@ -5,13 +5,14 @@
 ** Login   <kureuil@epitech.net>
 ** 
 ** Started on  Mon Apr  4 21:50:50 2016 Arch Kureuil
-** Last update Sun Apr 10 20:34:24 2016 Arch Kureuil
+** Last update Sun Apr 10 21:21:15 2016 Arch Kureuil
 */
 
 #ifndef STRACE_H_
 # define STRACE_H_
 
 # include <stdbool.h>
+# include <stdio.h>
 # include <sys/types.h>
 # include <sys/user.h>
 
@@ -22,24 +23,27 @@
 
 # define STRACE_SYSCALL_ARGS_MAX	6
 
-typedef int (*t_printer)(unsigned long long int,
-			 pid_t,
-			 const struct user_regs_struct *);
+enum e_output_type
+  {
+    O_INNATE,
+    O_FILE,
+    O_COMMAND
+  };
 
 struct s_strace_opts
 {
-  pid_t	pid;
-  char	**command;
-  bool	compliant;
+  pid_t			pid;
+  char			**command;
+  bool			compliant;
+  long			align;
+  FILE			*output;
+  enum e_output_type	output_type;
 };
 
-typedef int (*t_optparser)(struct s_strace_opts *opts);
-
-struct s_option
-{
-  char		flag;
-  t_optparser	callback;
-};
+typedef int (*t_printer)(unsigned long long int,
+			 pid_t,
+			 const struct user_regs_struct *,
+			 const struct s_strace_opts *);
 
 struct s_flag
 {
@@ -148,7 +152,8 @@ strace_read_buf(unsigned long long addr,
 int
 strace_print_flags(unsigned long long int value,
                    size_t size,
-                   const struct s_flag *flags);
+                   const struct s_flag *flags,
+		   const struct s_strace_opts *opts);
 
 /*
 ** Print the string pointed by value
@@ -161,7 +166,8 @@ strace_print_flags(unsigned long long int value,
 int
 strace_print_string(unsigned long long int value,
 		    pid_t child,
-		    const struct user_regs_struct *regs);
+		    const struct user_regs_struct *regs,
+		    const struct s_strace_opts *opts);
 
 /*
 ** Print value as a size_t
@@ -171,7 +177,8 @@ strace_print_string(unsigned long long int value,
 int
 strace_print_size_t(unsigned long long int value,
 		    pid_t child,
-		    const struct user_regs_struct *regs);
+		    const struct user_regs_struct *regs,
+		    const struct s_strace_opts *opts);
 
 /*
 ** Print value as a ssize_t
@@ -181,7 +188,8 @@ strace_print_size_t(unsigned long long int value,
 int
 strace_print_ssize_t(unsigned long long int value,
 		     pid_t child,
-		     const struct user_regs_struct *regs);
+		     const struct user_regs_struct *regs,
+		     const struct s_strace_opts *opts);
 
 /*
 ** Print value as a hexadecimal number
@@ -191,7 +199,8 @@ strace_print_ssize_t(unsigned long long int value,
 int
 strace_print_hexa(unsigned long long int value,
 		  pid_t child,
-		  const struct user_regs_struct *regs);
+		  const struct user_regs_struct *regs,
+		  const struct s_strace_opts *opts);
 
 /*
 ** Print value as a decimal integer
@@ -201,7 +210,8 @@ strace_print_hexa(unsigned long long int value,
 int
 strace_print_integer(unsigned long long int value,
 		     pid_t child,
-		     const struct user_regs_struct *regs);
+		     const struct user_regs_struct *regs,
+		     const struct s_strace_opts *opts);
 
 /*
 ** Print value as a pointer
@@ -211,7 +221,8 @@ strace_print_integer(unsigned long long int value,
 int
 strace_print_pointer(unsigned long long int value,
 		     pid_t child,
-		     const struct user_regs_struct *regs);
+		     const struct user_regs_struct *regs,
+		     const struct s_strace_opts *opts);
 
 /*
 ** Print value as a long int
@@ -221,7 +232,8 @@ strace_print_pointer(unsigned long long int value,
 int
 strace_print_long(unsigned long long int value,
 		  pid_t child,
-		  const struct user_regs_struct *regs);
+		  const struct user_regs_struct *regs,
+		  const struct s_strace_opts *opts);
 
 /*
 ** Print value as an unsigned long int
@@ -231,7 +243,8 @@ strace_print_long(unsigned long long int value,
 int
 strace_print_ulong(unsigned long long int value,
 		   pid_t child,
-		   const struct user_regs_struct *regs);
+		   const struct user_regs_struct *regs,
+		   const struct s_strace_opts *opts);
 
 /*
 ** Print flags given to open(2)
@@ -239,7 +252,8 @@ strace_print_ulong(unsigned long long int value,
 int
 strace_print_flags_open(unsigned long long int value,
 			pid_t child,
-			const struct user_regs_struct *regs);
+			const struct user_regs_struct *regs,
+			const struct s_strace_opts *opts);
 
 /*
 ** Print flags given to stat(2)
@@ -247,13 +261,16 @@ strace_print_flags_open(unsigned long long int value,
 int
 strace_print_stat_struct(unsigned long long int value,
 			 pid_t child,
-			 const struct user_regs_struct *regs);
+			 const struct user_regs_struct *regs,
+			 const struct s_strace_opts *opts);
 
 /*
 ** Print flages given to mmap(2)
 */
 int
 strace_print_mmap_flags(unsigned long long int value,
-                         pid_t child,
-                         const struct user_regs_struct *regs);
+			pid_t child,
+			const struct user_regs_struct *regs,
+			const struct s_strace_opts *opts);
+
 #endif

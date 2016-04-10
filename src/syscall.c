@@ -5,7 +5,7 @@
 ** Login   <kureuil@epitech.net>
 ** 
 ** Started on  Sun Apr 10 17:37:58 2016 Arch Kureuil
-** Last update Sun Apr 10 18:01:40 2016 Arch Kureuil
+** Last update Sun Apr 10 21:16:46 2016 Arch Kureuil
 */
 
 #include <stddef.h>
@@ -75,23 +75,24 @@ strace_syscall_print_call(const struct s_syscall *scall,
   unsigned long long int	value;
   int				printed;
 
-  printed = fprintf(stderr, "%s(", scall->name);
+  printed = fprintf(opts->output, "%s(", scall->name);
   i = 0;
   while (i < scall->argc)
     {
       if (i > 0)
-	printed += fprintf(stderr, ", ");
+	printed += fprintf(opts->output, ", ");
       value = strace_registers_get_by_idx(regs, i);
       if (opts->compliant)
 	{
 	  if (scall->args[i].custom)
-	    printed += scall->args[i].printer.callback(value, child, regs);
+	    printed += scall->args[i].printer.callback(value, child,
+						       regs, opts);
 	  else
-	    printed += g_printers[scall->args[i].printer.type](value,
-							       child, regs);
+	    printed += g_printers[scall->args[i].printer.type](value, child,
+							       regs, opts);
 	}
       else
-	printed += strace_print_hexa(value, child, regs);
+	printed += strace_print_hexa(value, child, regs, opts);
       i++;
     }
   return (printed);
@@ -109,16 +110,16 @@ strace_syscall_print_return(const struct s_syscall *scall,
   if (!scall->noreturn)
     {
       if (opts->compliant)
-	shift = MAX(40 - printed, 0);
-      fprintf(stderr, ")%*s= ", shift, " ");
-      g_printers[scall->retval](regs->rax, opts->pid, regs);
-      fprintf(stderr, "\n");
+	shift = MAX(opts->align - printed, 0);
+      fprintf(opts->output, ")%*s= ", shift, " ");
+      g_printers[scall->retval](regs->rax, opts->pid, regs, opts);
+      fprintf(opts->output, "\n");
     }
   else
     {
       if (opts->compliant)
-	shift = MAX(40 - printed, 0);
-      fprintf(stderr, ")%*s= ?\n", shift, " ");
+	shift = MAX(opts->align - printed, 0);
+      fprintf(opts->output, ")%*s= ?\n", shift, " ");
     }
   return (0);
 }
@@ -147,7 +148,7 @@ strace_syscall_handle(pid_t child,
   strace_syscall_print_return(&scall, &registers, opts, printed);
   if (!WIFSTOPPED(status))
     {
-      fprintf(stderr, "+++ exited with %d +++\n", WEXITSTATUS(status));
+      fprintf(opts->output, "+++ exited with %d +++\n", WEXITSTATUS(status));
       return (1);
     }
   return (0);

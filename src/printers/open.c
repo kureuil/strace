@@ -5,7 +5,7 @@
 ** Login   <kureuil@epitech.net>
 ** 
 ** Started on  Sun Apr 10 17:35:04 2016 Arch Kureuil
-** Last update Sun Apr 10 18:04:16 2016 Arch Kureuil
+** Last update Sun Apr 10 21:13:10 2016 Arch Kureuil
 */
 
 #define _GNU_SOURCE
@@ -38,9 +38,11 @@ static const struct s_flag g_open_flags[] = {
 int
 strace_print_flags_open(unsigned long long int value,
 			pid_t child,
-			const struct user_regs_struct *regs)
+			const struct user_regs_struct *regs,
+			const struct s_strace_opts *opts)
 {
   (void) child;
   (void) regs;
-  return (strace_print_flags(value, ARRAYSIZE(g_open_flags), g_open_flags));
+  return (strace_print_flags(value, ARRAYSIZE(g_open_flags),
+			     g_open_flags, opts));
 }

@@ -5,7 +5,7 @@
 ** Login   <kureuil@epitech.net>
 ** 
 ** Started on  Sun Apr 10 17:32:36 2016 Arch Kureuil
-** Last update Sun Apr 10 17:13:19 2016 
+** Last update Sun Apr 10 21:15:57 2016 Arch Kureuil
 */
 
 #define _GNU_SOURCE
@@ -45,7 +45,8 @@ static const struct s_flag g_stat_flags[] = {
 int
 strace_print_stat_struct(unsigned long long int addr,
                          pid_t child,
-                         const struct user_regs_struct *regs)
+                         const struct user_regs_struct *regs,
+			 const struct s_strace_opts *opts)
 {
   struct stat	stat_data;
   size_t	printed;
@@ -54,10 +55,12 @@ strace_print_stat_struct(unsigned long long int addr,
   printed = 0;
   if (strace_read_buf(addr, child, sizeof(stat_data), &stat_data))
     return (0);
-  printed = fprintf(stderr, "{st_mode=");
+  printed = fprintf(opts->output, "{st_mode=");
   printed += strace_print_flags(stat_data.st_mode,
-				ARRAYSIZE(g_stat_flags), g_stat_flags);
-  printed += fprintf(stderr, "|%u, st_size=%lu, ...}",
+				ARRAYSIZE(g_stat_flags),
+				g_stat_flags,
+				opts);
+  printed += fprintf(opts->output, "|%u, st_size=%lu, ...}",
 		     stat_data.st_mode, stat_data.st_size);
   return (printed);
 }

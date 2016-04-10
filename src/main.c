@@ -5,7 +5,7 @@
 ** Login   <kureuil@epitech.net>
 **
 ** Started on  Fri Mar 18 08:53:07 2016 Arch Kureuil
-** Last update Sun Apr 10 20:11:33 2016 Arch Kureuil
+** Last update Sun Apr 10 21:20:18 2016 Arch Kureuil
 */
 
 #include <sys/ptrace.h>
@@ -21,12 +21,14 @@
 static void
 usage(FILE *stream, const char *prgm)
 {
-  fprintf(stream, "\nUSAGE: %s [-s] [-p PID] COMMAND [ARGS]\n\n", prgm);
+  fprintf(stream, "\nUSAGE: %s [OPTIONS...] COMMAND [ARGS]\n\n", prgm);
   fprintf(stream, "OPTIONS:\n");
   fprintf(stream, "\t-s       Make output more compliant with the system's"
 	  " strace\n");
   fprintf(stream, "\t-p PID   Trace program with id = PID instead of launching"
 	  " COMMAND\n");
+  fprintf(stream, "\t-a ALIGN Align output on column ALIGN (default=40)\n");
+  fprintf(stream, "\t-f FILE  Write strace output to FILE (default=stderr)\n");
   fprintf(stream, "\tCOMMAND  Program to execute & trace\n");
   fprintf(stream, "\tARGS     Arguments given to the executed program\n");
 }
@@ -52,9 +54,22 @@ exec(char **command, pid_t *pidptr)
 }
 
 static void
+opts_init(struct s_strace_opts *opts)
+{
+  memset(opts, 0, sizeof(struct s_strace_opts));
+  opts->align = 40;
+  opts->output = stderr;
+  opts->output_type = O_INNATE;
+}
+
+static void
 opts_destroy(struct s_strace_opts *opts)
 {
   free(opts->command);
+  if (opts->output_type == O_FILE)
+    fclose(opts->output);
+  else if (opts->output_type == O_COMMAND)
+    pclose(opts->output);
 }
 
 int
@@ -62,7 +77,7 @@ main(int argc, char *argv[])
 {
   MANAGED(opts_destroy) struct s_strace_opts	opts;
 
-  memset(&opts, 0, sizeof(opts));
+  opts_init(&opts);
   if (optparse(argc, argv, &opts))
     {
       usage(stderr, argv[0]);
