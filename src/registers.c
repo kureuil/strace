@@ -5,7 +5,7 @@
 ** Login   <kureuil@epitech.net>
 ** 
 ** Started on  Sun Apr 10 17:26:36 2016 Arch Kureuil
-** Last update Sun Apr 10 18:02:36 2016 Arch Kureuil
+** Last update Sun Apr 10 19:18:17 2016 Arch Kureuil
 */
 
 #include <sys/types.h>
@@ -77,7 +77,7 @@ strace_read_buf(unsigned long long addr,
   while (readb < nbytes)
     {
       errno = 0;
-      tmp = ptrace(PTRACE_PEEKDATA, child, addr);
+      tmp = ptrace(PTRACE_PEEKDATA, child, addr + readb);
       if (errno)
 	return (-1);
       if ((nbytes - readb) / sizeof(tmp))
@@ -85,7 +85,7 @@ strace_read_buf(unsigned long long addr,
       else
 	written = nbytes % sizeof(tmp);
       memcpy((void *)((uintptr_t)buffer + readb), &tmp, written);
-      readb += sizeof(tmp);
+      readb += written;
     }
   return (0);
 }
