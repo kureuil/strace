@@ -5,7 +5,7 @@
 ** Login   <kureuil@epitech.net>
 ** 
 ** Started on  Mon Apr  4 22:03:36 2016 Arch Kureuil
-** Last update Sun Apr 10 21:17:19 2016 Arch Kureuil
+** Last update Sun Apr 10 21:35:21 2016 Arch Kureuil
 */
 
 #include <unistd.h>
@@ -20,6 +20,7 @@ static const struct s_option g_opts[] = {
   { .flag = 's', .callback = &strace_option_compliant },
   { .flag = 'a', .callback = &strace_option_align },
   { .flag = 'f', .callback = &strace_option_file },
+  { .flag = 't', .callback = &strace_option_timestamp },
   { .flag = '\0', .callback = NULL },
 };
 
@@ -66,7 +67,7 @@ optparse(int argc, char **argv, struct s_strace_opts *opts)
   char			c;
   struct s_option	opt;
 
-  while ((c = getopt(argc, argv, "sp:a:f:")) != -1)
+  while ((c = getopt(argc, argv, "sp:a:f:t")) != -1)
     {
       if (optparser_get_option(c, &opt))
 	return (-1);

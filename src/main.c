@@ -5,7 +5,7 @@
 ** Login   <kureuil@epitech.net>
 **
 ** Started on  Fri Mar 18 08:53:07 2016 Arch Kureuil
-** Last update Sun Apr 10 21:20:18 2016 Arch Kureuil
+** Last update Sun Apr 10 21:37:40 2016 Arch Kureuil
 */
 
 #include <sys/ptrace.h>
@@ -29,6 +29,8 @@ usage(FILE *stream, const char *prgm)
 	  " COMMAND\n");
   fprintf(stream, "\t-a ALIGN Align output on column ALIGN (default=40)\n");
   fprintf(stream, "\t-f FILE  Write strace output to FILE (default=stderr)\n");
+  fprintf(stream, "\t-t       Print a timestamp before every output. If twice"
+	  ", include milliseconds in timestamp.\n");
   fprintf(stream, "\tCOMMAND  Program to execute & trace\n");
   fprintf(stream, "\tARGS     Arguments given to the executed program\n");
 }
@@ -60,6 +62,7 @@ opts_init(struct s_strace_opts *opts)
   opts->align = 40;
   opts->output = stderr;
   opts->output_type = O_INNATE;
+  opts->timestamp_type = TS_NONE;
 }
 
 static void

@@ -5,7 +5,7 @@
 ** Login   <kureuil@epitech.net>
 ** 
 ** Started on  Sun Apr 10 17:26:36 2016 Arch Kureuil
-** Last update Sun Apr 10 19:18:17 2016 Arch Kureuil
+** Last update Sun Apr 10 21:42:23 2016 Arch Kureuil
 */
 
 #include <sys/types.h>
@@ -15,6 +15,27 @@
 #include <errno.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <assert.h>
+#include <stdint.h>
+#include <stddef.h>
+#include "strace.h"
+
+unsigned long long int
+strace_registers_get_by_idx(const struct user_regs_struct *regs,
+			    size_t idx)
+{
+  static const uintptr_t	offsets[STRACE_SYSCALL_ARGS_MAX] = {
+    offsetof(struct user_regs_struct, rdi),
+    offsetof(struct user_regs_struct, rsi),
+    offsetof(struct user_regs_struct, rdx),
+    offsetof(struct user_regs_struct, r10),
+    offsetof(struct user_regs_struct, r8),
+    offsetof(struct user_regs_struct, r9),
+  };
+
+  assert(idx < STRACE_SYSCALL_ARGS_MAX);
+  return (*((unsigned long long int *)((uintptr_t)regs + offsets[idx])));
+}
 
 static int
 strace_read_string_slice(pid_t child,

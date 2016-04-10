@@ -5,7 +5,7 @@
 ** Login   <kureuil@epitech.net>
 ** 
 ** Started on  Mon Apr  4 21:50:50 2016 Arch Kureuil
-** Last update Sun Apr 10 21:21:15 2016 Arch Kureuil
+** Last update Sun Apr 10 21:42:47 2016 Arch Kureuil
 */
 
 #ifndef STRACE_H_
@@ -30,6 +30,13 @@ enum e_output_type
     O_COMMAND
   };
 
+enum e_timestamp_type
+  {
+    TS_NONE,
+    TS_TIME,
+    TS_MILLISECOND
+  };
+
 struct s_strace_opts
 {
   pid_t			pid;
@@ -38,6 +45,7 @@ struct s_strace_opts
   long			align;
   FILE			*output;
   enum e_output_type	output_type;
+  enum e_timestamp_type	timestamp_type;
 };
 
 typedef int (*t_printer)(unsigned long long int,
@@ -105,6 +113,10 @@ int
 strace_syscall_handle(pid_t child,
 		      const struct user_regs_struct *regs,
 		      const struct s_strace_opts *opts);
+
+unsigned long long int
+strace_registers_get_by_idx(const struct user_regs_struct *regs,
+			    size_t idx);
 
 int
 strace_peek_registers(pid_t child,

@@ -5,17 +5,17 @@
 ** Login   <kureuil@epitech.net>
 ** 
 ** Started on  Sun Apr 10 17:37:58 2016 Arch Kureuil
-** Last update Sun Apr 10 21:16:46 2016 Arch Kureuil
+** Last update Sun Apr 10 21:58:55 2016 Arch Kureuil
 */
 
 #include <stddef.h>
 #include <sys/types.h>
 #include <sys/user.h>
 #include <sys/ptrace.h>
+#include <sys/time.h>
 #include <sys/wait.h>
 #include <stdio.h>
-#include <stdint.h>
-#include <assert.h>
+#include <time.h>
 #include "strace.h"
 
 t_printer g_printers[] = {
@@ -29,23 +29,6 @@ t_printer g_printers[] = {
   &strace_print_ssize_t,
   NULL
 };
-
-static unsigned long long int
-strace_registers_get_by_idx(const struct user_regs_struct *regs,
-			    size_t idx)
-{
-  static const uintptr_t	offsets[STRACE_SYSCALL_ARGS_MAX] = {
-    offsetof(struct user_regs_struct, rdi),
-    offsetof(struct user_regs_struct, rsi),
-    offsetof(struct user_regs_struct, rdx),
-    offsetof(struct user_regs_struct, r10),
-    offsetof(struct user_regs_struct, r8),
-    offsetof(struct user_regs_struct, r9),
-  };
-
-  assert(idx < STRACE_SYSCALL_ARGS_MAX);
-  return (*((unsigned long long int *)((uintptr_t)regs + offsets[idx])));
-}
 
 static int
 strace_syscall_get_by_id(unsigned long long id, struct s_syscall *scallp)
@@ -66,6 +49,34 @@ strace_syscall_get_by_id(unsigned long long id, struct s_syscall *scallp)
 }
 
 static int
+strace_syscall_print_call_prelude(const struct s_syscall *scall,
+				  const struct s_strace_opts *opts)
+{
+  int			printed;
+  struct tm		*tm;
+  time_t		curtime;
+  struct timeval	timeval;
+
+  printed = 0;
+  if (opts->timestamp_type != TS_NONE)
+    {
+      curtime = time(NULL);
+      tm = localtime(&curtime);
+      printed += fprintf(opts->output, "%02d:%02d:%02d",
+			 tm->tm_hour, tm->tm_min, tm->tm_sec);
+      if (opts->timestamp_type == TS_MILLISECOND)
+	{
+	  if (!gettimeofday(&timeval, NULL))
+	    printed += fprintf(opts->output, ".%06lu",
+			       timeval.tv_usec % 1000000);
+	}
+      printed += fprintf(opts->output, " ");
+    }
+  printed += fprintf(opts->output, "%s(", scall->name);
+  return (printed);
+}
+
+static int
 strace_syscall_print_call(const struct s_syscall *scall,
 			  const struct user_regs_struct *regs,
 			  const struct s_strace_opts *opts,
@@ -75,7 +86,7 @@ strace_syscall_print_call(const struct s_syscall *scall,
   unsigned long long int	value;
   int				printed;
 
-  printed = fprintf(opts->output, "%s(", scall->name);
+  printed = strace_syscall_print_call_prelude(scall, opts);
   i = 0;
   while (i < scall->argc)
     {
