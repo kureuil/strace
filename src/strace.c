@@ -5,7 +5,7 @@
 ** Login   <kureuil@epitech.net>
 ** 
 ** Started on  Mon Apr  4 22:19:02 2016 Arch Kureuil
-** Last update Sun Apr 10 01:20:27 2016 Arch Kureuil
+** Last update Sun Apr 10 14:49:59 2016 
 */
 
 #define _GNU_SOURCE
@@ -23,6 +23,83 @@
 #include <stdint.h>
 #include <fcntl.h>
 #include "strace.h"
+
+int
+read_strace_nbytes_from_data(unsigned long long addr,
+			     pid_t child,
+			     size_t nbytes,
+			     void *buffer)
+{
+  unsigned long tmp;
+  size_t        readb;
+  size_t	written;
+
+  readb = 0;
+  while (readb < nbytes)
+    {
+      errno = 0;
+      tmp = ptrace(PTRACE_PEEKDATA, child, addr);
+      if (errno)
+	return (-1);
+      if ((nbytes - readb) / sizeof(tmp))
+	written = sizeof(tmp);
+      else
+	written = nbytes % sizeof(tmp);
+      memcpy((void *)((uintptr_t)buffer + readb), &tmp, written);
+      readb += sizeof(tmp);
+    }
+  return (0);
+}
+
+static const struct s_flag g_stat_flags[] = {
+  { .value = S_IFMT, .name = "S_IFMT" },
+  { .value = S_IFSOCK, .name = "S_IFSOCK" },
+  { .value = S_IFLNK, .name = "S_IFLNK" },
+  { .value = S_IFREG, .name = "S_IFREG" },
+  { .value = S_IFBLK, .name = "S_IFBLK" },
+  { .value = S_IFDIR, .name = "S_IFDIR" },
+  { .value = S_IFCHR, .name = "S_IFCHR" },
+  { .value = S_IFIFO, .name = "S_IFIFO" },
+  { .value = S_ISUID, .name = "S_ISUID" },
+  { .value = S_ISGID, .name = "S_ISGID" },
+  { .value = S_ISVTX, .name = "S_ISVTX" },
+  { .value = S_IRWXU, .name = "S_IRWXU" },
+  { .value = S_IRUSR, .name = "S_IRUSR" },
+  { .value = S_IWUSR, .name = "S_IWUSR" },
+  { .value = S_IWUSR, .name = "S_IWUSR" },
+  { .value = S_IRWXG, .name = "S_IRWXG"},
+  { .value = S_IRGRP, .name = "S_IRGRP"},
+  { .value = S_IWGRP, .name = "S_IWGRP"},
+  { .value = S_IXGRP, .name = "S_IXGRP"},
+  { .value = S_IRWXO, .name = "S_IRWXO"},
+  { .value = S_IROTH, .name = "S_IROTH"},
+  { .value = S_IWOTH, .name = "S_IWOTH"},
+  { .value = S_IXOTH, .name = "S_IXOTH"}
+};
+
+int
+strace_print_stat_struct(unsigned long long int addr,
+                         pid_t child,
+                         const struct user_regs_struct *regs)
+{
+  struct stat	stat_data;
+  size_t	printed;
+
+  printed = 0;
+  (void) regs;
+  if (read_strace_nbytes_from_data(addr,
+				   child,
+				   sizeof(stat_data),
+				   &stat_data) == -1)
+    {
+      fprintf(stderr, "Error");
+      return (strlen("Error"));
+    }  
+  printed = fprintf(stderr, "{st_mode=");
+  printed += strace_print_flags(stat_data.st_mode, ARRAYSIZE(g_stat_flags), g_stat_flags);
+  printed += fprintf(stderr, "|%d, st_size=%ld, ...}", stat_data.st_mode, stat_data.st_size);
+  return (printed);
+}
 
 int	strace_print_hexa(unsigned long long int value,
 			  pid_t child,

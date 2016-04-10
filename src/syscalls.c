@@ -5,7 +5,7 @@
 ** Login   <vagrant@epitech.net>
 **
 ** Started on  Sat Apr  9 19:30:52 2016
-** Last update Sun Apr 10 10:48:44 2016 
+** Last update Sun Apr 10 14:05:35 2016 
 */
 
 #include <stdlib.h>
@@ -116,9 +116,9 @@ struct s_syscall	g_syscalls[] = {
 	}
       },
       {
-	.custom = false,
+	.custom = true,
 	.printer = {
-	  .type = T_POINTER
+	 .callback = strace_print_stat_struct
 	}
       }
     },
@@ -137,9 +137,9 @@ struct s_syscall	g_syscalls[] = {
 	}
       },
       {
-	.custom = false,
+	.custom = true,
 	.printer = {
-	  .type = T_POINTER
+	  .callback = strace_print_stat_struct
 	}
       },
     }
@@ -158,9 +158,9 @@ struct s_syscall	g_syscalls[] = {
 	}
       },
       {
-	.custom = false,
+	.custom = true,
 	.printer = {
-	  .type = T_POINTER
+	  .callback = strace_print_stat_struct
 	}
       }
     }

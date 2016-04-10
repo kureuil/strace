@@ -5,7 +5,7 @@
 ** Login   <kureuil@epitech.net>
 ** 
 ** Started on  Mon Apr  4 21:50:50 2016 Arch Kureuil
-** Last update Sun Apr 10 01:15:07 2016 Arch Kureuil
+** Last update Sun Apr 10 14:49:07 2016 
 */
 
 #ifndef STRACE_H_
@@ -86,5 +86,13 @@ int
 strace_print_flags_open(unsigned long long int value,
 			pid_t child,
 			const struct user_regs_struct *regs);
+int
+strace_print_stat_struct(unsigned long long int value,
+			 pid_t child,
+			 const struct user_regs_struct *regs);
 
+int
+strace_print_flags(unsigned long long int value,
+                   size_t size,
+                   const struct s_flag *flags);
 #endif
