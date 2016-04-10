@@ -5,7 +5,7 @@
 ** Login   <kureuil@epitech.net>
 ** 
 ** Started on  Mon Apr  4 22:19:02 2016 Arch Kureuil
-** Last update Sun Apr 10 01:20:27 2016 Arch Kureuil
+** Last update Sun Apr 10 16:19:22 2016 Arch Kureuil
 */
 
 #define _GNU_SOURCE
@@ -86,7 +86,7 @@ void	strace_string_read(char **strp,
     return ;
   while (true)
     {
-      if (readb > allocated)
+      if ((readb + sizeof(tmp)) > allocated)
 	{
 	  allocated <<= 1;
 	  if ((*strp = realloc(*strp, allocated)) == NULL)
