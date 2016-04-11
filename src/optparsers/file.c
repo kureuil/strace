@@ -5,10 +5,11 @@
 ** Login   <kureuil@epitech.net>
 ** 
 ** Started on  Sun Apr 10 20:54:58 2016 Arch Kureuil
-** Last update Sun Apr 10 21:28:04 2016 Arch Kureuil
+** Last update Mon Apr 11 00:04:43 2016 Arch Kureuil
 */
 
 #include <stdio.h>
+#include <unistd.h>
 #include <errno.h>
 #include "optparser.h"
 #include "strace.h"
